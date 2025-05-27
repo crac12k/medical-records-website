@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Staff Dashboard</title>
+    <link rel="stylesheet" href="css/medical_staff.css">
+    <style>
+        .date-selector {
+            margin-bottom: 15px;
+            text-align: left; /* Align label left */
+        }
+        .date-selector label {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .date-selector input[type="date"] {
+            padding: 5px 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1em;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>Medical Staff Dashboard</h2>
+             </div>
+
+        <div class="form-section">
+            <form id="record-form">
+                <table>
+                     <thead>
+                        <tr>
+                            <th>Student Name</th>
+                            <th>Roll No.</th>
+                            <th>Diagnosis</th>
+                            <th>Medications</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="text" id="student-name" required></td>
+                            <td><input type="text" id="roll-no" required></td>
+                            <td><textarea id="diagnosis" rows="2" required></textarea></td>
+                            <td><textarea id="medications" rows="2" required></textarea></td>
+                            <td>
+                                <button type="submit" class="save-btn">Save</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </form>
+        </div>
+
+        <div class="records-section">
+             <div class="date-selector">
+                <label for="records-date-picker">Select Date:</label>
+                <input type="date" id="records-date-picker">
+            </div>
+            <h3>Records for Selected Date</h3> <div class="records-table-container">
+                <table id="records-table">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Name</th>
+                            <th>Roll No.</th>
+                            <th>Diagnosis</th>
+                            <th>Medications</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+    <script src="js/medical_staff.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Medical Certificate</title>
+    <link rel="stylesheet" href="css/certificate_style.css" />
+    <style>
+        .form-section input,
+        .form-section textarea,
+        .form-section select {
+            width: calc(100% - 20px); /* Consider using 100% and box-sizing */
+            padding: 8px;
+            margin: 5px 0 15px 0; /* Adjusted bottom margin */
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box; /* Add this */
+            display: block;
+            font-size: 1em; /* Ensure consistent font size */
+        }
+
+        .form-section textarea {
+            height: 80px;
+            resize: vertical; /* Allow vertical resize */
+        }
+
+        .signature-pad-container {
+            margin-top: 15px;
+            margin-bottom: 15px;
+            display: inline-block; /* To contain the canvas */
+            border: 1px solid #ccc; /* Border around container */
+            vertical-align: top; /* Align with label */
+        }
+
+        #signature-pad { /* Target canvas directly */
+            background-color: #f8f8f8;
+            display: block; /* Ensure canvas is block level */
+            touch-action: none; /* Prevent scrolling on touch devices */
+            cursor: crosshair;
+        }
+
+        .button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .action-buttons {
+             margin-top: 5px; /* Space below signature pad */
+             display: inline-block; /* Keep near the pad */
+             margin-left: 10px; /* Space between pad and clear button */
+             vertical-align: bottom; /* Align button with bottom of pad container */
+        }
+
+        .button-container button, .action-buttons button { /* Style all buttons */
+            padding: 10px 20px;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 0 5px; /* Add some margin between buttons */
+            transition: background-color 0.3s ease;
+        }
+
+        .button-container button {
+             background-color: #4caf50; /* Green for issue */
+        }
+        .action-buttons button.clear-btn {
+             background-color: #f44336; /* Red for clear */
+        }
+
+        .button-container button:hover {
+             background-color: #45a049; /* Darker green */
+        }
+        .action-buttons button.clear-btn:hover {
+            background-color: #d32f2f; /* Darker red */
+        }
+
+
+        .seal {
+           margin-top: 20px; /* Add space above seal */
+           text-align: right; /* Align seal text right */
+           font-weight: bold;
+           font-size: 0.9em;
+           line-height: 1.4;
+        }
+         .seal p {
+            margin: 2px 0; /* Adjust spacing in seal text */
+         }
+         /* Ensure labels align well */
+         .form-section label {
+             font-weight: bold;
+             margin-bottom: 3px;
+             display: inline-block; /* Allow side-by-side where appropriate */
+             margin-right: 5px;
+         }
+         /* Adjustments for side-by-side fields like Name/Age */
+         .form-section .inline-group {
+             display: flex;
+             align-items: center;
+             gap: 15px; /* Space between items */
+             margin-bottom: 15px;
+         }
+         .form-section .inline-group label {
+             margin-bottom: 0; /* Remove bottom margin for inline labels */
+             flex-shrink: 0; /* Prevent label from shrinking */
+         }
+         .form-section .inline-group input,
+         .form-section .inline-group select {
+             margin-bottom: 0; /* Remove bottom margin for inline inputs */
+             flex-grow: 1; /* Allow input to take available space */
+             width: auto; /* Override width setting */
+         }
+
+
+    </style>
+</head>
+<body>
+    <div class="certificate">
+        <div class="letterhead">
+             <img src="assets/lnmiit-logo.png" alt="LNMIIT Logo" class="logo" />
+            <div class="institute-info">
+                <h2>The LNM Institute of Information Technology</h2>
+                <p>(Deemed-to-be-University)</p>
+                <p>Rupa ki Nangal, Post-Sumel, Via-Jamdoli, Jaipur-302031, Rajasthan, India</p>
+                <h3>Institute Medical Center</h3>
+            </div>
+        </div>
+
+        <hr style="border-top: 1px solid #ccc; margin: 15px 0;" />
+
+        <div class="certificate-body">
+            <div class="top-row">
+                <div><strong>Serial No:</strong> <span id="serialNo"></span></div>
+                 <div><strong>Date:</strong> <input type="date" id="date" style="padding: 5px; border: 1px solid #ccc; border-radius: 4px;"/></div>
+            </div>
+
+            <h3 class="centered" style="text-decoration: underline; margin-bottom: 25px;">Medical Certificate</h3>
+
+            <div class="form-section">
+                <div class="inline-group">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" placeholder="Student's full name" readonly style="background-color: #eee;" />
+
+                    <label for="age">Age:</label>
+                    <input type="number" id="age" placeholder="Years" required style="max-width: 80px;" />
+
+                    <label for="gender">Gender:</label>
+                    <select id="gender" required style="min-width: 120px;">
+                        <option value="">Select</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <label for="diagnosis">Diagnosis:</label>
+                <textarea id="diagnosis" placeholder="Enter diagnosis details..." required></textarea>
+
+                <label for="rx">Prescription / Advice:</label>
+                <textarea id="rx" placeholder="Enter prescribed medications or advice..." required></textarea>
+
+                <label for="relaxations">Relaxations Provided (Optional):</label>
+                <textarea id="relaxations" placeholder="Enter details of any relaxations provided (e.g., Academic relaxation, rest advice)"></textarea>
+
+                <label for="signature-pad" style="display: block; margin-top: 20px;">Signature:</label>
+                 <div style="display: flex; align-items: flex-end;">
+                    <div class="signature-pad-container">
+                         <canvas id="signature-pad" width="350" height="150"></canvas>
+                    </div>
+                     <div class="action-buttons">
+                        <button type="button" onclick="clearSignature()" class="clear-btn">Clear Signature</button>
+                     </div>
+                 </div>
+
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 40px;">
+                 <div class="seal">
+                    <p>Dr. CHAND SINGH PANWAR</p>
+                    <p>Senior Medical Officer</p>
+                    <p>The LNM Institute of Information Technology</p>
+                    <p>RMC No. 31506</p>
+                </div>
+                <div class="button-container" style="margin-top: 0; text-align: right;"> <button type="button" onclick="issueCertificate()">Issue Certificate</button>
+                </div>
+            </div>
+        </div> </div> <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <script src="js/medical_certificate.js"></script>
+
+    <script>
+        // Helper function to clear signature (called by button)
+        function clearSignature() {
+            const canvas = document.getElementById("signature-pad");
+            if (canvas) {
+                const ctx = canvas.getContext("2d");
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.beginPath(); // Reset path after clearing
+                console.log("Signature cleared.");
+            }
+        }
+
+        // Helper function to check if a canvas is blank
+        function isCanvasBlank(canvas) {
+            if (!canvas) return true;
+            const blank = document.createElement('canvas');
+            blank.width = canvas.width;
+            blank.height = canvas.height;
+            // Compare data URLs to check for blankness
+            return canvas.toDataURL() === blank.toDataURL();
+        }
+
+        // *** MODIFIED: Main function to generate PDF and upload ***
+        async function issueCertificate() {
+            console.log("Issue Certificate button clicked.");
+            const { jsPDF } = window.jspdf;
+            const canvas = document.getElementById("signature-pad");
+
+            // --- Get Data from Form ---
+            const name = document.getElementById("name")?.value;
+            const age = document.getElementById("age")?.value;
+            const gender = document.getElementById("gender")?.value;
+            const date = document.getElementById("date")?.value; // Date selected on this form
+            const diagnosis = document.getElementById("diagnosis")?.value;
+            const rx = document.getElementById("rx")?.value; // Prescription/Advice
+            const relaxations = document.getElementById("relaxations")?.value || ""; // Optional
+            const serialNo = document.getElementById("serialNo")?.textContent;
+
+            // --- Retrieve rollNo and recordId passed via localStorage ---
+            const storedDataString = localStorage.getItem('certificateData');
+            const storedData = storedDataString ? JSON.parse(storedDataString) : {};
+            const rollNo = storedData.rollNo;
+            const recordId = storedData.recordId; // The unique ID of the patient_data record
+
+             // --- Retrieve the Button ID to disable from localStorage ---
+             const buttonIdToDisable = localStorage.getItem('certificateButtonId');
+
+
+            // --- Basic Validation ---
+            if (!rollNo) {
+                 alert("Error: Student Roll Number is missing. Cannot generate certificate.");
+                 console.error("Roll number not found in stored certificate data.");
+                 return;
+            }
+            // ** Add validation for recordId **
+             if (!recordId) {
+                 alert("Error: Patient Record ID is missing. Cannot link certificate.");
+                 console.error("Record ID not found in stored certificate data.");
+                 return;
+            }
+             if (!name || !age || !gender || !date || !diagnosis || !rx || !serialNo) {
+                alert("Please fill in all required details (Name, Age, Gender, Date, Diagnosis, Prescription, Serial No.).");
+                return;
+             }
+             if (isNaN(age) || parseInt(age) <= 0) {
+                alert("Please enter a valid age.");
+                return;
+             }
+            if (!canvas || isCanvasBlank(canvas)) {
+                alert("Please provide a signature on the signature pad.");
+                return;
+            }
+
+            // --- Create PDF ---
+            try {
+                console.log(`Generating PDF for RollNo: ${rollNo}, RecordID: ${recordId}`);
+                const pdf = new jsPDF("p", "mm", "a4"); // Portrait, mm, A4 size
+                pdf.setFontSize(10);
+                pdf.setFont("helvetica", "normal");
+
+                // --- PDF Content ---
+                 let y = 20; // Start position from top
+                 const lineHeight = 6; // Line height
+                 const marginLeft = 15;
+                 const marginRight = 15;
+                 const contentWidth = pdf.internal.pageSize.getWidth() - marginLeft - marginRight;
+
+                 // Header (Consider adding logo image directly if needed)
+                 pdf.setFont("helvetica", "bold");
+                 pdf.setFontSize(14);
+                 pdf.text("The LNM Institute of Information Technology", pdf.internal.pageSize.getWidth() / 2, y, { align: "center" });
+                 y += lineHeight;
+                 pdf.setFontSize(10);
+                 pdf.setFont("helvetica", "normal");
+                  pdf.text("(Deemed-to-be-University)", pdf.internal.pageSize.getWidth() / 2, y, { align: "center" });
+                  y += lineHeight;
+                 pdf.text("Rupa ki Nangal, Post-Sumel, Via-Jamdoli, Jaipur-302031, Rajasthan, India", pdf.internal.pageSize.getWidth() / 2, y, { align: "center" });
+                  y += lineHeight;
+                  pdf.setFontSize(12);
+                   pdf.setFont("helvetica", "bold");
+                  pdf.text("Institute Medical Center", pdf.internal.pageSize.getWidth() / 2, y, { align: "center" });
+                   y += lineHeight / 2;
+                  pdf.setLineWidth(0.3); // Thinner line
+                  pdf.line(marginLeft, y, pdf.internal.pageSize.getWidth() - marginRight, y);
+                  y += lineHeight * 2; // More space after line
+
+                // Serial No and Date
+                pdf.setFont("helvetica", "normal");
+                pdf.setFontSize(11); // Slightly larger font for details
+                pdf.text(`Serial No: ${serialNo}`, marginLeft, y);
+                pdf.text(`Date: ${new Date(date).toLocaleDateString()}`, pdf.internal.pageSize.getWidth() - marginRight, y, { align: "right" });
+                y += lineHeight * 2;
+
+                // Title
+                pdf.setFontSize(16);
+                pdf.setFont("helvetica", "bold");
+                pdf.text("Medical Certificate", pdf.internal.pageSize.getWidth() / 2, y, { align: "center", renderingMode: 'fillThenStroke' }); // Underline effect
+                y += lineHeight * 2.5; // More space after title
+
+                 // Content Body
+                 pdf.setFontSize(11);
+                 pdf.setFont("helvetica", "normal");
+
+                 // Use splitTextToSize for potentially long text sections
+                 const introductionText = `This is to certify that Mr./Ms. ${name}, Age: ${age} years, Gender: ${gender}, Roll No: ${rollNo} was examined on ${new Date(date).toLocaleDateString()}.`;
+                 const splitIntro = pdf.splitTextToSize(introductionText, contentWidth);
+                 pdf.text(splitIntro, marginLeft, y);
+                 y += splitIntro.length * lineHeight + lineHeight; // Adjust y based on lines
+
+                 pdf.setFont("helvetica", "bold");
+                 pdf.text("Diagnosis:", marginLeft, y);
+                 y += lineHeight;
+                 pdf.setFont("helvetica", "normal");
+                 const splitDiagnosis = pdf.splitTextToSize(diagnosis, contentWidth - 5); // Indent text slightly
+                 pdf.text(splitDiagnosis, marginLeft + 5, y);
+                 y += splitDiagnosis.length * lineHeight + lineHeight;
+
+                 pdf.setFont("helvetica", "bold");
+                 pdf.text("Prescription / Advice:", marginLeft, y);
+                 y += lineHeight;
+                  pdf.setFont("helvetica", "normal");
+                 const splitRx = pdf.splitTextToSize(rx, contentWidth - 5);
+                  pdf.text(splitRx, marginLeft + 5, y);
+                  y += splitRx.length * lineHeight + lineHeight;
+
+                if (relaxations && relaxations.trim() !== "") {
+                    pdf.setFont("helvetica", "bold");
+                    pdf.text("Relaxations Provided:", marginLeft, y);
+                    y += lineHeight;
+                     pdf.setFont("helvetica", "normal");
+                    const splitRelaxations = pdf.splitTextToSize(relaxations, contentWidth - 5);
+                    pdf.text(splitRelaxations, marginLeft + 5, y);
+                    y += splitRelaxations.length * lineHeight + lineHeight;
+                }
+
+                 // Signature and Seal Area
+                 y += lineHeight * 3; // More space before signature area
+                 const signatureY = y;
+                 const sealX = pdf.internal.pageSize.getWidth() - marginRight - 70; // Approx position for seal text, adjusted width
+                 const sealY = y + 5; // Start seal text slightly lower
+
+                 // Add Signature Image from Canvas
+                 const signatureImgData = canvas.toDataURL("image/png");
+                 try {
+                    // Adjust width/height as needed, maintain aspect ratio if possible
+                    pdf.addImage(signatureImgData, 'PNG', marginLeft, signatureY, 60, 30); // Example size, adjust as needed
+                 } catch (imgErr) {
+                    console.error("Error adding signature image to PDF:", imgErr);
+                    alert("Could not add signature to PDF. Please try again.");
+                    return; // Stop if signature can't be added
+                 }
+
+                // Add Seal Text (aligned with bottom right)
+                 pdf.setFontSize(10);
+                 pdf.setFont("helvetica", "bold");
+                 pdf.text("Dr. CHAND SINGH PANWAR", sealX, sealY, { align: 'left' });
+                 pdf.setFont("helvetica", "normal");
+                 pdf.text("Senior Medical Officer", sealX, sealY + lineHeight, { align: 'left' });
+                 pdf.text("The LNM Institute of Information Technology", sealX, sealY + lineHeight * 2, { align: 'left' });
+                 pdf.text("RMC No. 31506", sealX, sealY + lineHeight * 3, { align: 'left' });
+                // --- End PDF Content ---
+
+                console.log("PDF generation complete.");
+                const pdfBlob = pdf.output('blob');
+
+                // --- Prepare Form Data for Upload ---
+                const formData = new FormData();
+                const pdfFileName = `medical_certificate_${rollNo}_${Date.now()}.pdf`;
+                formData.append('pdf', pdfBlob, pdfFileName); // PDF file blob
+
+                // Append other form fields required by the backend
+                formData.append('name', name);
+                formData.append('rollNo', rollNo);
+                formData.append('age', age);
+                formData.append('gender', gender);
+                formData.append('date', date);
+                formData.append('diagnosis', diagnosis);
+                formData.append('medications', rx); // Send 'rx' as 'medications'
+                formData.append('relaxations', relaxations);
+                formData.append('serialNo', serialNo);
+                formData.append('recordId', recordId); // ** Send the patient_data record ID **
+
+                console.log("Submitting certificate data (including recordId) and PDF to backend...");
+                const token = localStorage.getItem('token');
+                 if (!token) {
+                    alert("Authentication Error: No token found. Please log in again.");
+                    // Redirect to login page if token is missing
+                    window.location.href = 'medical_login.html';
+                    return;
+                 }
+
+                // --- Send to Server ---
+                const response = await fetch('/generate-and-save-certificate', {
+                    method: 'POST',
+                    headers: {
+                         // 'Content-Type' is set automatically by browser for FormData
+                         'Authorization': `Bearer ${token}`
+                    },
+                    body: formData,
+                });
+
+                 const responseData = await response.json(); // Attempt to parse JSON response
+
+                 if (response.ok && responseData.success) {
+                    console.log("Server success response:", responseData);
+                    alert('Certificate generated and uploaded successfully!');
+
+                    // *** Call parent window to disable the specific button ***
+                    // Check if the opener window exists and has the function
+                    if (window.opener && typeof window.opener.disableCertificateButton === 'function') {
+                        if (buttonIdToDisable) {
+                            console.log(`Calling opener window to disable button: ${buttonIdToDisable}`);
+                            // Call the function in the parent window
+                            window.opener.disableCertificateButton(buttonIdToDisable);
+                        } else {
+                            console.warn("Could not find buttonId in localStorage to disable on parent window.");
+                            // Optionally inform user button wasn't disabled automatically
+                            alert("Certificate saved, but the button on the dashboard might need a manual refresh to update.");
+                        }
+                    } else {
+                         // Inform user if automatic disabling failed
+                         console.warn("Cannot access opener window or its disableCertificateButton function.");
+                         alert("Certificate saved, but couldn't update the button on the main dashboard automatically. Please refresh the dashboard manually.");
+                    }
+
+                    // Clean up localStorage items used for this certificate generation
+                    localStorage.removeItem('certificateButtonId');
+                    localStorage.removeItem('certificateData');
+
+                    // Close this certificate window/tab
+                    window.close();
+
+                 } else {
+                     // Handle server error response
+                     console.error("Server error response:", responseData);
+                     // Provide more specific error message if available
+                     let errorMsg = responseData.error || `Upload failed with status: ${response.status}`;
+                     if (response.status === 409) { // Conflict / Duplicate entry
+                         errorMsg = "Certificate already exists for this specific record entry. Please refresh the staff dashboard.";
+                     }
+                      // Display error to user
+                     alert(`Error saving certificate: ${errorMsg}`);
+                     // Do not close window on error
+                     // throw new Error(errorMsg); // Optionally re-throw if needed elsewhere
+                 }
+
+            } catch (error) {
+                // Handle network errors or errors during PDF generation/fetch call
+                console.error('Error during certificate generation or upload:', error);
+                alert(`An error occurred: ${error.message}. Please check the console and try again.`);
+                // Do not close window on error, allow user to retry or check details
+            }
+        } // End of issueCertificate function
+
+    </script>
+    </body>
+</html>
