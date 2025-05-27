@@ -13,9 +13,6 @@ This project simulates a real-world system for managing student medical records.
 - [Key Learnings & Backend Skills Demonstrated](#key-learnings--backend-skills-demonstrated)
 - [Core Features (Backend Perspective)](#core-features-backend-perspective)
 - [Technologies Used](#technologies-used)
-  - [Backend (My Focus Area)](#backend-my-focus-area)
-  - [Frontend (Developed by Team Members)](#frontend-developed-by-team-members)
-  - [Database](#database)
 - [System Architecture (High-Level)](#system-architecture-high-level)
 - [Setup and Installation Guide](#setup-and-installation-guide)
   - [Prerequisites](#prerequisites)
@@ -126,7 +123,7 @@ As the backend developer, I implemented the server-side logic and APIs that powe
 
 ## 🛠️ Technologies Used
 
-### Backend (My Focus Area)
+### Backend
 
 * **Node.js:** JavaScript runtime environment for building server-side applications.
 * **Express.js:** Web application framework for Node.js, used for routing and middleware.
@@ -138,11 +135,10 @@ As the backend developer, I implemented the server-side logic and APIs that powe
 * **`cors`:** Middleware to enable Cross-Origin Resource Sharing for frontend-backend communication.
 * **`express-validator`:** For robust server-side validation of incoming API request data.
 
-### Frontend (Developed by Team Members)
+### Frontend
 
 * HTML5, CSS3, Vanilla JavaScript
 * `jsPDF` (Client-side library used for generating PDF medical certificates before upload)
-    *(My role involved defining API contracts for the frontend to consume and ensuring successful integration.)*
 
 ### Database
 
