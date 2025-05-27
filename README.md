@@ -1,4 +1,4 @@
-# LNMIIT Medical Unit Management System (Backend Focused Role)
+# LNMIIT Medical Unit Management System
 
 **A collaborative full-stack web application (3-person team) where my primary role was the design, development, and implementation of the backend system using Node.js, Express.js, and MySQL.**
 
